@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { redirect } from "next/navigation"
 import { auth } from "@clerk/nextjs/server"
 import { decrypt } from "@/lib/encryption"
@@ -12,18 +13,14 @@ import Table from "@/components/table"
 
 const PAGE_SIZE = 5
 
-export default async function Home({ 
-  searchParams
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined }
-}) {
+export default async function Home({ searchParams }: { searchParams: any }) {
   const { userId } = await auth()
 
   if (!userId) redirect("/sign-in")
 
   const page = Number(searchParams?.page) || 1
   const query = (searchParams?.query as string)?.toLowerCase() || ""
-  const sort = searchParams?.sort === "desc" ? "desc" : "asc"
+  const sort = (searchParams?.sort as string) === "desc" ? "desc" : "asc"
 
   const where = {
     userId,
