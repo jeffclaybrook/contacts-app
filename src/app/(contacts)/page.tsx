@@ -12,15 +12,17 @@ import Table from "@/components/table"
 
 const PAGE_SIZE = 5
 
-export default async function Home({ searchParams }: {
-  searchParams: { page?: string; query?: string; sort?: string }
-}) {
+type HomeProps = {
+  searchParams: Record<string, string | string[] | undefined>
+}
+
+export default async function Home({ searchParams }: HomeProps) {
   const { userId } = await auth()
 
   if (!userId) redirect("/sign-in")
 
   const page = Number(searchParams.page) || 1
-  const query = searchParams.query?.toLowerCase() || ""
+  const query = searchParams.query?.toString().toLowerCase() || ""
   const sort = searchParams.sort === "desc" ? "desc" : "asc"
 
   const where = {
