@@ -3,10 +3,18 @@ import { editContact } from "@/lib/actions"
 import prisma from "@/lib/prisma"
 import Form from "@/components/form"
 
-export default async function Edit({ params }: { params: { id: string } }) {
+type EditProps = {
+ params: {
+  id: string
+ }
+}
+
+export default async function Edit({ params }: EditProps) {
  const contact = await prisma.contact.findUnique({
   where: { id: params.id }
  })
+
+ if (!params?.id) redirect("/")
 
  if (!contact) redirect("/")
  
