@@ -49,7 +49,7 @@ export default async function Home({ searchParams }: { searchParams: any }) {
     <>
       <Navbar />
       <main className="p-4">
-        {decryptedContacts.length > 0 ? (
+        {filtered.length > 0 ? (
           <>
             <Table initialContacts={paginated} formAction={deleteContact} />
             <div className="flex items-center justify-center mt-6">
