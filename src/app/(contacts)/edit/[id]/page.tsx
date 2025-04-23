@@ -1,34 +1,40 @@
 import { redirect } from "next/navigation"
 import { editContact } from "@/lib/actions"
+import { decrypt } from "@/lib/encryption"
 import prisma from "@/lib/prisma"
 import Form from "@/components/form"
+import Navbar from "@/components/navbar"
 
-type EditProps = {
- params: {
-  id: string
- }
-}
+export default async function Edit({ params }: { params: Promise<{ id: string }>}) {
+ const { id } = await params
 
-export default async function Edit({ params }: EditProps) {
  const contact = await prisma.contact.findUnique({
-  where: { id: params.id }
+  where: { id: id }
  })
 
- if (!params?.id) redirect("/")
-
  if (!contact) redirect("/")
+
+ const decryptedContact = {
+  ...contact,
+  name: decrypt(contact.name),
+  phone: decrypt(contact.phone),
+  email: decrypt(contact.email)
+ }
  
- const updateAction = editContact.bind(null, params.id)
+ const updateAction = editContact.bind(null, id)
 
  return (
-  <main className="p-4">
-   <h1 className="text-slate-700 dark:text-slate-50 text-2xl text-center mb-8">Edit Contact</h1>
-   <form
-    action={updateAction}
-    className="flex flex-col gap-6 max-w-md mx-auto"
-   >
-    <Form initialData={contact} />
-   </form>
-  </main>
+  <>
+   <Navbar />
+   <main className="p-4">
+    <h1 className="text-slate-700 dark:text-slate-50 text-2xl text-center mb-8">Edit Contact</h1>
+    <form
+     action={updateAction}
+     className="flex flex-col gap-6 max-w-md mx-auto"
+    >
+     <Form initialData={decryptedContact} />
+    </form>
+   </main>
+  </>
  )
 }

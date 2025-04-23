@@ -41,7 +41,7 @@ export default function Form({ initialData }: FormProps) {
      type="text"
      placeholder="Phone"
      name="phone"
-     value={phone}
+     value={formatPhoneInput(phone)}
      onChange={e => setPhone(formatPhoneInput(e.target.value))}
      required
      className="w-full border border-slate-200 rounded-md px-4 pl-10 py-3 focus:outline-none focus:ring-2 focus:ring-slate-500 dark:text-slate-50"
@@ -71,7 +71,7 @@ export default function Form({ initialData }: FormProps) {
      type="submit"
      aria-label="Save"
      disabled={pending}
-     className="bg-sky-800 text-white p-2 lg:px-8 rounded-lg shadow-lg cursor-pointer hover:bg-sky-950 transition"
+     className="bg-sky-800 text-white py-2 px-8 rounded-lg shadow-lg cursor-pointer hover:bg-sky-950 transition"
     >
      {pending ? "Saving..." : "Save"}
     </button>
