@@ -22,35 +22,28 @@ export default async function Home({ searchParams }: { searchParams: any }) {
   const query = (searchParams?.query as string)?.toLowerCase() || ""
   const sort = (searchParams?.sort as string) === "desc" ? "desc" : "asc"
 
-  const where = {
-    userId,
-    OR: query
-      ? [
-        { name: { contains: query, mode: "insensitive" as const } },
-        { phone: { contains: query, mode: "insensitive" as const } },
-        { email: { contains: query, mode: "insensitive" as const } }
-      ]
-      : undefined
-  }
+  const allContacts = await prisma.contact.findMany({
+    where: { userId },
+    orderBy: { name: sort }
+  })
 
-  const [contacts, totalCount] = await Promise.all([
-    prisma.contact.findMany({
-      where,
-      orderBy: { name: sort },
-      take: PAGE_SIZE,
-      skip: (page - 1) * PAGE_SIZE
-    }),
-    prisma.contact.count({ where })
-  ])
-
-  const totalPages = Math.ceil(totalCount / PAGE_SIZE)
-
-  const decryptedContacts = contacts.map((c) => ({
+  const decryptedContacts = allContacts.map((c) => ({
     ...c,
     name: decrypt(c.name),
     phone: decrypt(c.phone),
     email: decrypt(c.email)
   }))
+
+  const filtered = query
+    ? decryptedContacts.filter((c) =>
+      [c.name, c.phone, c.email].some((field) =>
+        field.toLowerCase().includes(query)
+      )
+    )
+    : decryptedContacts
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   return (
     <>
@@ -58,7 +51,7 @@ export default async function Home({ searchParams }: { searchParams: any }) {
       <main className="p-4">
         {decryptedContacts.length > 0 ? (
           <>
-            <Table initialContacts={contacts} formAction={deleteContact} />
+            <Table initialContacts={paginated} formAction={deleteContact} />
             <div className="flex items-center justify-center mt-6">
               <Pagination totalPages={totalPages} />
             </div>

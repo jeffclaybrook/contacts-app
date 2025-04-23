@@ -18,6 +18,10 @@ export function encrypt(text: string): string {
 }
 
 export function decrypt(text: string): string {
+ if (!text?.includes(":")) {
+  return text
+ }
+ 
  const parts = text.split(":")
  const iv = Buffer.from(parts[0], "hex")
  const encryptedText = parts[1]

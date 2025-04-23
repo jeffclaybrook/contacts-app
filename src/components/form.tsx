@@ -41,7 +41,7 @@ export default function Form({ initialData }: FormProps) {
      type="text"
      placeholder="Phone"
      name="phone"
-     value={formatPhoneInput(phone)}
+     value={phone}
      onChange={e => setPhone(formatPhoneInput(e.target.value))}
      required
      className="w-full border border-slate-200 rounded-md px-4 pl-10 py-3 focus:outline-none focus:ring-2 focus:ring-slate-500 dark:text-slate-50"
